@@ -1,11 +1,25 @@
-
+/**
+ *  Cool Remote Control Application
+ *	ver 1.0
+ *
+ *  
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License. You may obtain a copy of the License at:
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+ *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+ *  for the specific language governing permissions and limitations under the License.
+ */
+ 
 import groovy.json.JsonSlurper
 
 definition(
-  name: "CoolMaster Air Conditioner Hub",
+  name: "CoolRemote",
   namespace: "coolautomation",
   author: "coolautomation",
-  description: "CoolMaster SmartApp",
+  description: "CoolMasterNet Remote Control Application",
   category: "My Apps",
   singleInstance: true
 )
@@ -26,6 +40,7 @@ preferences {
 }
 
 def installed() {
+	settings.CM_port = "8081"
 	subscribeToEvents()
     pollDevices()
     schedule("0/20 * * * * ?", pollDevices)
@@ -47,10 +62,14 @@ def updated(){
     }
 }
 
+def getPort(){
+	return "8081"
+}
+
 def lanResponseHandler(evt) {
 	def map = stringToMap(evt.stringValue)
   	if (map.ip == convertIPtoHex(settings.CM_ip) &&
-		map.port == convertPortToHex(settings.CM_port)) {
+		map.port == convertPortToHex(getPort())) {
     	if (map.mac) {
     		state.proxyMac = map.mac
     	}
@@ -87,8 +106,7 @@ def sendCommandToCoolMaster (Map data) {
     	path=path.concat("&${params}")
     }
     
-    if (settings.CM_ip.length() == 0 ||
-    	settings.CM_port.length() == 0) {
+    if(settings.CM_ip.length() == 0){
     	log.error "SmartThings CoolAutomation configuration not set!"
     	return
   	}
@@ -161,7 +179,7 @@ private getHttpBody(body) {
 }
 
 private getProxyAddress() {
-	return settings.CM_ip + ":" + settings.CM_port
+	return settings.CM_ip + ":" + getPort()
 }
 
 private getNotifyAddress() {
