@@ -269,7 +269,7 @@ def parseData(data) {
     state.userTempUnit = data.userTempUnit
     state.isConversionNeed = ( state.userTempUnit!=state.coolMasterTempUnit )
 
-setTemperatureParams(temperature, setpoint)
+	setTemperatureParams(temperature, setpoint)
 
      if( onoff == "off" ){
     	mode = onoff
@@ -589,8 +589,10 @@ def setThermostatMode(String value) {
     log.trace "Executing 'setThermostatMode' $value"
     if(value in MODES )
     	sendEvent(name: "thermostatMode", value: value)
-    else if(value == "off" && isSwitchedOn() )
-    	off()
+    else if(value == "off"){
+    	if( isSwitchedOn() )
+    		off()
+    }
     else
     	log.warn "'$value' is not a supported mode. Please set one of ${MODES.join(', ')}"
 }
@@ -645,3 +647,6 @@ private int parseToRoundedInt(String strTmp){
 def poll(){
 log.debug "polling..."
 }
+
+
+
