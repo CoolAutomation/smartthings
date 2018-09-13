@@ -645,6 +645,3 @@ private int parseToRoundedInt(String strTmp){
 def poll(){
 log.debug "polling..."
 }
-
-
-
