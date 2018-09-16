@@ -40,7 +40,6 @@ preferences {
 }
 
 def installed() {
-	settings.CM_port = "8081"
 	subscribeToEvents()
     pollDevices()
     schedule("0/20 * * * * ?", pollDevices)
@@ -63,7 +62,7 @@ def updated(){
 }
 
 def getPort(){
-	return "8081"
+	return "10103"
 }
 
 def lanResponseHandler(evt) {
@@ -92,11 +91,8 @@ def sendCommandToCoolMaster (Map data) {
     def command = data.name
     
 	log.debug "CM send command: ${command} to indoor ${deviceId} with params ${params}"
-    if( command.contains("ls") )
-    	path = "/v2/device/${CM_serial}/${command}"
-    else
-    	path = "/v1/device/${CM_serial}/raw?command=${command}"
-	
+    path = ( command.contains("ls") )? "/v2.0/device/${CM_serial}/${command}"
+    								 : "/v1.0/device/${CM_serial}/raw?command=${command}"
     if( deviceId ){
     	deviceId = deviceId.replaceAll('\\.','_')
     	path=path.concat("&${deviceId}")
