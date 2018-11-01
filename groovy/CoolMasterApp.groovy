@@ -21,7 +21,9 @@ definition(
   author: "coolautomation",
   description: "CoolMasterNet Remote Control Application",
   category: "My Apps",
-  singleInstance: true
+  singleInstance: true,
+  iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
+  iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png"
 )
 
 preferences {
