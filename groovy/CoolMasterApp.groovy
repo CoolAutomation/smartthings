@@ -32,8 +32,8 @@ preferences {
         	input "hostHub", "hub", title: "Select Hub", multiple: false, required: true
   		}
   		section("CoolMasterNet") {
-    		input "CM_ip", "text", title: "IP Address", description: "(ie. 192.168.1.10)", required: true, defaultValue: "192.168.16.124"
-    		input "CM_serial", "text", title: "Serial number", description: "(ie. 283B960004AA)", required: true, defaultValue: "283B960004AA"
+    		input "CM_ip", "text", title: "IP Address", description: "(ie. 192.168.1.10)", required: true, defaultValue: "192.168.16.130"
+    		input "CM_serial", "text", title: "Serial number", description: "(ie. 283B96002128)", required: true, defaultValue: "283B96002128"
   		}
         section("Misc"){
         	input "userTempUnit","enum",title: "User Temperature Unit", description: "Temperature Unit",requied: false, options:["C","F"], submitOnChange: true, defaultValue: "C"
@@ -82,7 +82,7 @@ def lanResponseHandler(evt) {
 
   	def headers = getHttpHeaders(map.headers);
   	def body = getHttpBody(map.body);
-  	log.debug "Body: ${body}"
+  	log.debug "CM body: ${body}"
   	processEvent(body)
 }
 
@@ -105,10 +105,10 @@ def sendCommandToCoolMaster (Map data) {
     }
     
     if(settings.CM_ip.length() == 0){
-    	log.error "SmartThings CoolAutomation configuration not set!"
+    	log.error "CM: SmartThings CoolAutomation configuration not set!"
     	return
   	}
-	log.debug "path: ${path}"
+	log.debug "CM: path: ${path}"
   	def host = getProxyAddress()
   	def headers = [:]
   	headers.put("HOST", host)
@@ -131,19 +131,19 @@ private processEvent(evt) {
 }
 
 private updateChildDevices(units){
-	log.debug "fillChildDevicesDB"
+	log.debug "CM: fillChildDevicesDB"
 	units.each{
     		def device = getChildDevice(it.uid);
     		if(!device){
 				device = addChildDevice("CoolMasterIndoor", it.uid, hostHub.id, ["name": "CoolMaster Device", label: "${it.uid}", completedSetup: true])
-    			log.debug "Added device: ${it.uid} onoff: ${it.onoff} setpoint: ${it.st} temp:${it.rt} mode:${it.mode} fspeed: ${it.fspeed}"
+    			log.debug "CM: Added device: ${it.uid} onoff: ${it.onoff} setpoint: ${it.st} temp:${it.rt} mode:${it.mode} fspeed: ${it.fspeed}"
             }
             it.put("userTempUnit",settings.userTempUnit)
             device.parseData(it)
   	}
     getAllChildDevices().each{dev->
     	if( !units.find{it.uid==dev.deviceNetworkId} ){
-        	log.debug "Device ${dev.deviceNetworkId} was deleted"
+        	log.debug "CM: Device ${dev.deviceNetworkId} was deleted"
         	deleteChildDevice(dev.deviceNetworkId)
         }
     }
