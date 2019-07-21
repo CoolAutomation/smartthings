@@ -1,6 +1,6 @@
 /**
  *  Cool Remote Control Application
- *	ver 1.0
+ *	ver 1.1
  *
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -32,7 +32,7 @@ preferences {
         	input "hostHub", "hub", title: "Select Hub", multiple: false, required: true
   		}
   		section("CoolMasterNet") {
-    		input "CM_ip", "text", title: "IP Address", description: "(ie. 192.168.1.10)", required: true, defaultValue: "192.168.16.130"
+    		input "CM_ip", "text", title: "IP Address", description: "(ie. 192.168.1.10)", required: true, defaultValue: "192.168.16.20"
     		input "CM_serial", "text", title: "Serial number", description: "(ie. 283B96002128)", required: true, defaultValue: "283B96002128"
   		}
         section("Misc"){
@@ -82,6 +82,7 @@ def lanResponseHandler(evt) {
 
   	def headers = getHttpHeaders(map.headers);
   	def body = getHttpBody(map.body);
+    log.debug "CM headers: ${headers}"
   	log.debug "CM body: ${body}"
   	processEvent(body)
 }
